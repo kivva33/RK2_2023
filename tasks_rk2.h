@@ -14,24 +14,17 @@ struct Node {//структура, в которой хранится ячейк
 class Graph {//
 private :
     Node* head;
-    //здесь можно писать любые функции, которые могут понадобиться
+    void buildTreeDFS(Node* parent, int countNodes);
+    void DFS(Node* parent, FILE* f);
 public :
     Graph();
     Graph(int countNodes);
     ~Graph();
     int buildTreeBFS(int countNodes);
     int buildTreeDFS(int countNodes);
-
     void BFS();
     void DFS();
-    /*
-        description	:	функция поиска узла по его имени
-        input 		:	nameNode -- имя узла
-        output		:	{bool -- узел найде, list<int> -- список имён узлов до необходимого}
-        description	:	приставка DFS -- поиск в глубину, BSF -- поиск в ширину
-        author		:
-        date		:
-    */
+
     std::pair<bool, std::list<int>> searchDFS(int nameNode);
     std::pair<bool, std::list<int>> searchBFS(int nameNode);
 };
@@ -59,20 +52,9 @@ public:
     void deletenode(NodeD* l);
     void deletelist();
     void push_back(Node* nameNode) override;
-    NodeD* GetHead();
-    NodeD* GetTail();
     virtual Node* get_element() override;
     virtual bool get_information();
 };
-
-void printDHead(DoubleLinkedList& l);
-void printDTail(DoubleLinkedList& l);
-
-class FILO : public DoubleLinkedList{
-public:
-    Node* get_element() override;
-    bool get_information() override;
-    };
 
 class FIFO : public DoubleLinkedList {
 public:
@@ -80,3 +62,4 @@ public:
     bool get_information() override;
 };
 
+void task_1();

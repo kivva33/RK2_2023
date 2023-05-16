@@ -10,18 +10,21 @@ Node::Node(int nameNode){
 }
 Node::~Node(){
     std::destroy(listChilds.begin(),listChilds.end());
-    std::cout << "Node was destroyed\n";
+    std::cout << "\nNode was destroyed\n";
 }
 Graph::Graph() : Graph::Graph(0){}
 Graph::Graph(int countNodes){
     head = nullptr;
 }
 Graph::~Graph(){
-    std::cout << "graph was destroyed\n";
+    std::cout << "\ngraph was destroyed\n";
     head = nullptr;
 }
+static int count = 0;
+
 int Graph::buildTreeBFS(int countNodes){
-    assert(countNodes > 0);
+    if(countNodes < 0)
+        return -1;
     FIFO* stack = new FIFO;
     head = new Node;
     stack->push_back(head);
@@ -45,10 +48,27 @@ int Graph::buildTreeBFS(int countNodes){
             count *= countNodes;
         }
     }
+    return 0;
 }
 int Graph::buildTreeDFS(int countNodes){
-
+    if(countNodes < 0)
+        return -1;
+    head = new Node;
+    count = 0;
+    head->name = count++;
+    buildTreeDFS(head, countNodes);
+    return 0;
 }
+void Graph::buildTreeDFS(Node* parent, int countNodes){
+    if(countNodes > 0)
+        for(int i = 0; i < countNodes; i++){
+            Node* f = new Node;
+            f->name = count++;
+            parent->listChilds.push_back(f);
+            buildTreeDFS(f, countNodes - 1);
+        }
+}
+
 void Graph::BFS(){
     FILE* f = fopen("bfs_res", "w");
     FIFO* stack = new FIFO;
@@ -68,19 +88,35 @@ void Graph::BFS(){
         }
        fprintf(f, "%c\n",'}');
     }
+    fclose(f);
+
 
 }
-/*функция обхода дерева в ширину
-        при обходе графа записать результат в файл с название bfs_res
-        Формат файла 0{1,2,3}\n 1{4,5}\n 2{6,7}\n 3{8,9}\n 4{10}\n 5{11}\n 6{12}\n 7{13}\n 8{14}\n 9{15}
-\n -- новая строка
-*/
 void Graph::DFS(){
+    FILE* f = fopen("dfs_res", "w");
+    DFS(head, f);
+    fclose(f);
+}
+void Graph::DFS(Node* parent, FILE* f) {
+    fprintf(f, "%d", parent->name);
+    if(parent->listChilds.size()){
+        fprintf(f, "%c", '{');
+    }
+    for (std::list<Node *>::iterator it = parent->listChilds.begin(); it != parent->listChilds.end(); it++) {
+            DFS(*it, f);
+        if (!(std::next(it) == parent->listChilds.end()))
+            fprintf(f, "%c", ',');
+    }
+    if(parent->listChilds.size())
+        fprintf(f, "%c", '}');
 
 }
-std::pair<bool, std::list<int>> Graph::searchDFS(int nameNode){}
-std::pair<bool, std::list<int>> Graph::searchBFS(int nameNode){
 
+std::pair<bool, std::list<int>> Graph::searchDFS(int nameNode){
+    std::cout << std::endl;
+}
+std::pair<bool, std::list<int>> Graph::searchBFS(int nameNode){
+    std::cout << std::endl;
 }
 DoubleLinkedList::DoubleLinkedList(){
     Head = nullptr;
@@ -127,56 +163,16 @@ void DoubleLinkedList::push_back(Node* nameNode){
     }
 }
 
-NodeD* DoubleLinkedList::GetHead(){
-    return Head;
-}
-
-NodeD* DoubleLinkedList::GetTail(){
-    return Tail;
-}
-
 Node* DoubleLinkedList::get_element(){
     std::cout << "\nnone code\n\n";
 }
+
 bool DoubleLinkedList::get_information(){
     if(Head == nullptr)
         return true;
     return false;
 }
-void printDHead(DoubleLinkedList& l){
-    NodeD* p = l.GetHead();
-    if(p == nullptr){
-        return;
-    }
-    while(p->next != nullptr) {
-        std::cout << p->nameNode << std::endl;
-        p = p->next;
-    }
-}
-void printDTail(DoubleLinkedList& l){
-    NodeD* p = l.GetTail();
-    if(p == nullptr)
-        return;
-    p = p->prev;
-    while(p != nullptr) {
-        std::cout << p->nameNode << std::endl;
-        p = p->prev;
-    }
-}
 
-Node* FILO::get_element(){
-    if(Tail->prev == nullptr){
-        return 0;
-    }
-    Tail = Tail->prev;
-    Tail->next = nullptr;
-    return Tail->nameNode;
-}
-bool FILO::get_information(){
-    if(Tail->prev == nullptr)
-        return true;
-    return false;
-}
 Node* FIFO::get_element(){
     if(Head->next == nullptr){
         return 0;
@@ -191,4 +187,13 @@ bool FIFO::get_information() {
     if(Head->next == nullptr)
         return true;
     return false;
+}
+
+void task_1(){
+    Graph p;
+    p.buildTreeDFS(3);
+    p.DFS();
+
+    p.buildTreeBFS(3);
+    p.BFS();
 }
